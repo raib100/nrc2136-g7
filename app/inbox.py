@@ -18,10 +18,10 @@ def getDB():
 def show():
     db = get_db()
     messages = db.execute(
-        QUERY
+        'SELECT * FROM user' #QUERY
     ).fetchall()
 
-    return render_template(TEMP, messages=messages)
+    return render_template('auth/register.html', messages=messages)
 
 
 @bp.route('/send', methods=('GET', 'POST'))
@@ -37,7 +37,7 @@ def send():
 
         if not to_username:
             flash('To field is required')
-            return render_template(TEMP)
+            return render_template('SELECT * FROM user') #TEMP
 
         if not subject:
             flash('Subject field is required')
@@ -45,13 +45,13 @@ def send():
 
         if not body:
             flash('Body field is required')
-            return render_template(TEMP)
+            return render_template('SELECT * FROM user' )#TEMP)
 
         error = None
         userto = None
 
         userto = db.execute(
-            QUERY, (to_username,)
+            'SELECT * FROM user' #QUERY, (to_username,)
         ).fetchone()
 
         if userto is None:
@@ -62,8 +62,7 @@ def send():
         else:
             db = get_db()
             db.execute(
-                QUERY,
-                (g.user['id'], userto['id'], subject, body)
+                'SELECT * FROM user' #QUERY,                 (g.user['id'], userto['id'], subject, body)
             )
             db.commit()
 

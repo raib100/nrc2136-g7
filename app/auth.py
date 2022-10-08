@@ -27,15 +27,15 @@ def activate():
 
             db = get_db()
             attempt = db.execute(
-                "SELECT * WHERE ? = ?", (number, utils.U_UNCONFIRMED)
+                "SELECT * FROM activationlink where challenge=? and state=? and CURRENT_TIMESTAMP BETWEEN created AND validuntil", (number, utils.U_UNCONFIRMED)
             ).fetchone()
 
             if attempt is not None:
                 db.execute(
-                    QUERY, (utils.U_CONFIRMED, attempt['id'])
+                    'SELECT * FROM user'  # probando: QUERY , (utils.U_CONFIRMED, attempt['id'])
                 )
                 db.execute(
-                    QUERY,
+                    'INSERT INTO user VALUES(username=?,password=?,salt=?,email=?)',
                     (attempt['username'], attempt['password'], attempt['salt'], attempt['email'])
                 )
                 db.commit()
@@ -48,6 +48,7 @@ def activate():
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
+    
     try:
         if g.user:
             return redirect(url_for('inbox.show'))
@@ -99,17 +100,22 @@ def register():
                         """
                 flash(error)
                 return render_template('auth/register.html')
+            
+             
+            flash('Email address invalid.')
+
 
             salt = hex(random.getrandbits(128))[2:]
             hashP = generate_password_hash(password + salt)
             number = hex(random.getrandbits(512))[2:]
-
+            
             db.execute(
-                QUERY,
-                (number, utils.U_UNCONFIRMED, username, hashP, salt, email)
+                "INSERT INTO user (id, username, password, salt, email)VALUES(?, ?, ?, ?, ?)",
+                (username, username, password, salt, email)
+                # (number, utils.U_UNCONFIRMED, username, hashP, salt, email)
             )
             db.commit()
-
+            
             credentials = db.execute(
                 'Select user,password from credentials where name=?', (utils.EMAIL_APP,)
             ).fetchone()
@@ -128,7 +134,7 @@ def register():
 
             flash('Please check in your registered email to activate your account')
             return render_template('auth/login.html')
-
+        
         return render_template('auth/register.html')
     except Exception:
         return render_template('auth/register.html')
@@ -155,11 +161,11 @@ def confirm():
 
             if not password1:
                 flash('Password confirmation required')
-                return render_template(TEMP, number=authid)
+                return render_template('auth/change.html', number=authid)
 
             if password1 != password:
                 flash('Both values should be the same')
-                return render_template(TEMP, number=authid)
+                return render_template('auth/change.html', number=authid)
 
             if not utils.isPasswordValid(password):
                 error = """ Password should contain at least a lowercase letter,
@@ -170,17 +176,17 @@ def confirm():
 
             db = get_db()
             attempt = db.execute(
-                QUERY, (authid, utils.F_ACTIVE)
+                'SELECT * FROM user'  # probando: QUERY , (authid, utils.F_ACTIVE)
             ).fetchone()
 
             if attempt is not None:
                 db.execute(
-                    QUERY, (utils.F_INACTIVE, attempt['id'])
+                    'SELECT * FROM user'  # probando: QUERY , (utils.F_INACTIVE, attempt['id'])
                 )
                 salt = hex(random.getrandbits(128))[2:]
                 hashP = generate_password_hash(password + salt)
                 db.execute(
-                    QUERY, (hashP, salt, attempt['userid'])
+                    'SELECT * FROM user'  # probando: QUERY , (hashP, salt, attempt['userid'])
                 )
                 db.commit()
                 return redirect(url_for('auth.login'))
@@ -188,7 +194,7 @@ def confirm():
                 flash('Invalid')
                 return render_template('auth/forgot.html')
 
-        return render_template(TEMP)
+        return render_template('auth/change.html')
     except Exception:
         return render_template('auth/forgot.html')
 
@@ -204,7 +210,7 @@ def change():
 
             db = get_db()
             attempt = db.execute(
-                QUERY, (number, utils.F_ACTIVE)
+                'SELECT * FROM user' #, (number, utils.F_ACTIVE)
             ).fetchone()
 
             if attempt is not None:
@@ -212,7 +218,7 @@ def change():
 
         return render_template('auth/forgot.html')
     except Exception:
-        return render_template(TEMP)
+        return render_template('auth/change.html')
 
 
 @bp.route('/forgot', methods=('GET', 'POST'))
@@ -231,19 +237,17 @@ def forgot():
 
             db = get_db()
             user = db.execute(
-                QUERY, (email,)
+                'SELECT * FROM user' #, (email,)
             ).fetchone()
 
             if user is not None:
                 number = hex(random.getrandbits(512))[2:]
 
                 db.execute(
-                    QUERY,
-                    (utils.F_INACTIVE, user['id'])
+                    'SELECT * FROM user' #,                     (utils.F_INACTIVE, user['id'])
                 )
                 db.execute(
-                    QUERY,
-                    (user['id'], number, utils.F_ACTIVE)
+                    'SELECT * FROM user' #,                     (user['id'], number, utils.F_ACTIVE)
                 )
                 db.commit()
 
@@ -265,7 +269,7 @@ def forgot():
 
         return render_template('auth/forgot.html')
     except Exception:
-        return render_template(TEMP)
+        return render_template('auth/forgot.html')
 
 
 @bp.route('/login', methods=('GET', 'POST'))
@@ -286,7 +290,7 @@ def login():
             if not password:
                 error = 'Password Field Required'
                 flash(error)
-                return render_template(TEMP)
+                return render_template('auth/login.html')
 
             db = get_db()
             error = None
@@ -306,7 +310,7 @@ def login():
 
             flash(error)
 
-        return render_template(TEMP)
+        return render_template('auth/forgot.html')
     except Exception:
         return render_template('auth/login.html')
 
@@ -319,7 +323,7 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = get_db().execute(
-            QUERY, (user_id,)
+            'SELECT * FROM user' #, (user_id,)
         ).fetchone()
 
 
