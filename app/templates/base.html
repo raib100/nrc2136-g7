@@ -6,16 +6,20 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
   </head>
   <body class="max-w-lg mx-auto rounded-md">
+
+    <h1 class="m-0 ml-1" id="MEN1">
+      <link rel="icon" type="image/x-icon" href="/app/static/Imagenes/conversacion.ico">
+      MENSAJERÍA ELECTRÓNICA</h1>
     <nav class="rounded-t-md prose">
-      <h1 class="m-0 ml-1">Demo</h1>
+      
       <ul class="m-0">
         {% if g.user %}
           <li><span>{{ g.user['username'] }}</span>
-          <li><a href="{{ url_for('auth.logout') }}">Logout</a>
+          <li><a href="{{ url_for('auth.logout') }}">Cerrar Sesión</a>
         {% else %}
-          <li><a href="{{ url_for('auth.register') }}">Register</a>
-          <li><a href="{{ url_for('auth.login') }}">Login</a>
-          <li><a href="{{ url_for('auth.forgot') }}">Forgot your password?</a>
+          <li><a href="{{ url_for('auth.register') }}">Registrarse</a>
+          <li><a href="{{ url_for('auth.login') }}">Inicio</a>
+          <li><a href="{{ url_for('auth.forgot') }}">Olvidó su contraseña?</a>
         {% endif %}
       </ul>
     </nav>

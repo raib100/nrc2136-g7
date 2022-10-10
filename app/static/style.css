@@ -15,7 +15,7 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 .post > header { display: flex; align-items: flex-end; font-size: 0.85em; }
 .post > header > div:first-of-type { flex: auto; }
 .post > header h1 { font-size: 1.5em; margin-bottom: 0; }
-.post .about { color: slategray; font-style: italic; }
+.post .about { color: rgb(36, 106, 175); font-style: italic; }
 .post .body { white-space: pre-line; }
 .content:last-child { margin-bottom: 0; }
 .content form { margin: 1em 0; display: flex; flex-direction: column; }
@@ -23,3 +23,24 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 .content textarea { resize: vertical; }
 input.danger { color: #cc2f2e; }
 input[type=submit] { align-self: start; min-width: 10em; }
+
+
+#MEN1{
+    justify-content: space-around;
+    font-size: 30px;
+    font-stretch: condensed;
+    display: flex;
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.prose{
+    justify-content: space-around;
+    display: flex;
+    background-color: rgb(165, 163, 163);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+
+}
+
